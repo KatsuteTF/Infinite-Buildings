@@ -15,8 +15,8 @@ public Plugin myinfo = {
 }
 
 public OnPluginStart() {
-	AddCommandListener(OnBuild, "build");
-	HookEvent("player_builtobject", OnBuilt);
+    AddCommandListener(OnBuild, "build");
+    HookEvent("player_builtobject", OnBuilt);
 }
 
 public void OnClientPutInServer(int client){
@@ -32,10 +32,9 @@ public Action OnBuild(const int client, const char[] cmd, args){
 }
 
 public Action OnBuildDeferred(const Event event, const int client){ // revert if not enough metal to build any
-    if(IsClientInGame(client) && TF2_GetPlayerClass(client) == TFClass_Engineer)
-        if(GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon") != GetPlayerWeaponSlot(client, 5)) // blueprint
-            SetDisposableClient(client, false);
-    return Plugin_Continue;
+	if(IsClientInGame(client))
+		OnWeaponSwitch(client, GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon"));
+	return Plugin_Continue;
 }
 
 public void OnBuilt(const Event event, const char[] name, const bool dontBroadcast){
@@ -45,9 +44,12 @@ public void OnBuilt(const Event event, const char[] name, const bool dontBroadca
 }
 
 public Action OnWeaponSwitch(const int client, const int slot){
-    if(IsClientInGame(client) && TF2_GetPlayerClass(client) == TFClass_Engineer)
-        if(slot != GetPlayerWeaponSlot(client, 5)) // blueprint
-            SetDisposableClient(client, slot == GetPlayerWeaponSlot(client, 3)); // PDA
+    if(IsClientInGame(client))
+        if(TF2_GetPlayerClass(client) == TFClass_Engineer){
+            if((slot == GetPlayerWeaponSlot(client, 0) || slot == GetPlayerWeaponSlot(client, 1) || slot == GetPlayerWeaponSlot(client, 2) || slot == GetPlayerWeaponSlot(client, 3) || slot == GetPlayerWeaponSlot(client, 4)))
+                SetDisposableClient(client, slot == GetPlayerWeaponSlot(client, 3)); // PDA
+        }else
+            SetDisposableClient(client, false);
     return Plugin_Continue;
 }
 
