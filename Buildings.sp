@@ -32,9 +32,9 @@ public Action OnBuild(const int client, const char[] cmd, args){
 }
 
 public Action OnBuildDeferred(const Event event, const int client){ // revert if not enough metal to build any
-	if(IsClientInGame(client))
-		OnWeaponSwitch(client, GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon"));
-	return Plugin_Continue;
+    if(IsClientInGame(client))
+        OnWeaponSwitch(client, GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon"));
+    return Plugin_Continue;
 }
 
 public void OnBuilt(const Event event, const char[] name, const bool dontBroadcast){
