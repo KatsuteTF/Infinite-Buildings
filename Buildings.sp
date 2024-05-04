@@ -2,7 +2,6 @@
 
 #pragma semicolon 1
 
-#include <sourcemod>
 #include <sdkhooks>
 #include <tf2_stocks>
 
@@ -10,7 +9,7 @@ public Plugin myinfo = {
     name        = "Infinite Buildings",
     author      = "Katsute",
     description = "Infinite buildings",
-    version     = "1.0",
+    version     = "1.1",
     url         = "https://github.com/KatsuteTF/Infinite-Buildings"
 }
 
@@ -20,11 +19,12 @@ public OnPluginStart() {
 }
 
 public void OnClientPutInServer(int client){
-    SDKHook(client, SDKHook_WeaponSwitchPost, OnWeaponSwitch);
+    if(!IsFakeClient(client))
+        SDKHook(client, SDKHook_WeaponSwitchPost, OnWeaponSwitch);
 }
 
 public Action OnBuild(const int client, const char[] cmd, args){
-    if(TF2_GetPlayerClass(client) == TFClass_Engineer){
+    if(!IsFakeClient(client) && TF2_GetPlayerClass(client) == TFClass_Engineer){
         SetDisposableClient(client, true);
         CreateTimer(0.1, OnBuildDeferred, client);
     }
@@ -39,7 +39,7 @@ public Action OnBuildDeferred(const Event event, const int client){ // revert if
 
 public void OnBuilt(const Event event, const char[] name, const bool dontBroadcast){
     int client = GetClientOfUserId(GetEventInt(event, "userid"));
-    if(TF2_GetPlayerClass(client) == TFClass_Engineer)
+    if(!IsFakeClient(client) && TF2_GetPlayerClass(client) == TFClass_Engineer)
         SetDisposableClient(client, false);
 }
 
